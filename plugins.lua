@@ -5,6 +5,8 @@ local plugins = {
       ensure_installed = {
         "rust-analyzer",
         "codelldb",
+        "gopls",
+        "delve",
       }
     }
   },
@@ -60,7 +62,35 @@ local plugins = {
       table.insert(M.sources, {name = "crates"})
       return M
     end
-  }
+  },
+  {
+    "leoluz/nvim-dap-go",
+    ft = {"go"},
+    opts = function ()
+      return require("custom.configs.dap-go")
+    end,
+    config = function(_, opts)
+      require("dap-go").setup(opts)
+    end,
+  },
+  {
+    "ray-x/go.nvim",
+    dependencies = {  -- optional packages
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = function ()
+      return require("custom.configs.go")
+    end,
+    config = function(_, opts)
+      require("go").setup(opts)
+    end,
+    event = {"CmdlineEnter"},
+    ft = {"go", 'gomod'},
+    -- if you need to install/update all binaries
+    build = ':lua require("go.install").update_all_sync()',
+  },
 }
 
 return plugins
