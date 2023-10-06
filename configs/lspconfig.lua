@@ -23,6 +23,16 @@ local util = require("lspconfig/util")
 lspconfig.gopls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
-  filetypes = { "go" },
-  root_dir = lspconfig.util.root_pattern "go.mod",
+  filetypes = { "go", "gomod", "gowork", "gotmpl" },
+  root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+  settings = {
+    gopls = {
+      completeUnimported = true,
+      usePlaceholders = true,
+      -- gofumpt = true,
+      analyses = {
+        unusedparams = true,
+      },
+    },
+  },
 }

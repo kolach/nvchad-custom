@@ -7,8 +7,11 @@ local plugins = {
         "codelldb",
         "gopls",
         "delve",
-      }
-    }
+        "gofumpt",
+        "goimports-reviser",
+        "golines",
+      },
+    },
   },
   {
     "neovim/nvim-lspconfig",
@@ -43,6 +46,7 @@ local plugins = {
     },
     config = function()
       require("custom.configs.dap")
+      require("core.utils").load_mappings("dap")
     end,
   },
   {
@@ -50,6 +54,7 @@ local plugins = {
     dependencies = "hrsh7th/nvim-cmp",
     ft = {"rust", "toml"},
     config = function (_, opts)
+      require("core.utils").load_mappings("crates")
       local crates = require("crates")
       crates.setup(opts)
       crates.show()
@@ -65,31 +70,33 @@ local plugins = {
   },
   {
     "leoluz/nvim-dap-go",
+    dependencies = "mfussenegger/nvim-dap",
     ft = {"go"},
     opts = function ()
       return require("custom.configs.dap-go")
     end,
     config = function(_, opts)
       require("dap-go").setup(opts)
+      require("core.utils").load_mappings("dap_go")
     end,
   },
   {
-    "ray-x/go.nvim",
-    dependencies = {  -- optional packages
-      "ray-x/guihua.lua",
-      "neovim/nvim-lspconfig",
-      "nvim-treesitter/nvim-treesitter",
-    },
+    "jose-elias-alvarex/null-ls.nvim",
+    ft = {"go"},
     opts = function ()
-      return require("custom.configs.go")
+      return require("custom.configs.null-ls")
     end,
-    config = function(_, opts)
-      require("go").setup(opts)
+  },
+  {
+    "olexsmir/gopher.nvim",
+    ft = "go",
+    config = function (_, opts)
+      require("gopher").setup(opts)
+      require("core.utils").load_mappings("gopher")
     end,
-    event = {"CmdlineEnter"},
-    ft = {"go", 'gomod'},
-    -- if you need to install/update all binaries
-    build = ':lua require("go.install").update_all_sync()',
+    build = function ()
+      vim.cmd [[silent! GoInstallDeps]]
+    end,
   },
 }
 
